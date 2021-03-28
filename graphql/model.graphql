@@ -1,0 +1,18 @@
+scalar JSON
+
+type Artist{
+    artist: ID
+    artistname: String
+    count: Int
+}
+
+type Instrument{
+    instrument: String
+    count: Int
+}
+
+
+type Query {
+    artists(mini: Int): [Artist]
+    instruments: [Instrument]
+}

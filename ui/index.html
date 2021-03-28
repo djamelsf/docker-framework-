@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <script type="text/javascript" src="js/d3.min.js"></script>
+        <link rel="stylesheet" href="css/bootstrap.min.css"/>
+        <style type="text/css">
+            .artistCount{
+                float: right;
+                background-color: #00933C;
+                text-align: right;
+                color: whitesmoke;
+                font-size: small;
+            }
+            .artist{
+                height: 1.1em;
+                display: table;
+                width: 400px;
+            }
+            .artistName{
+                font-size: small;
+                display: table-cell;
+            }
+        </style>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="index.html">Accueil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="artists.html">Artistes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="instruments.html">Instruments</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Tonalités</a>
+            </li>
+        </ul>
+        <section id="content">
+            <div id="d3-content">
+                <p>Pr&eacute;sentation de donn&eacute;es de 
+                    bibliographie&nbsp;: des auteurs publient conjointement 
+                    &agrave; des conf&eacute;rences. </p>
+                <p>On cherche &agrave; rendre 
+                    l'information visuellement attractive.</p>
+                <p>Ce framework devrait combiner&nbsp;:</p>
+                <ul><li>une base de donn&eacute;es non traditionnelle fournissant du JSON</li>
+                    <li>un serveur Nodejs avec socket.io pour servir les données</li>
+                    <li>une visualisation de donn&eacute;es générée côté client avec D3.js</li>
+                </ul>
+                <p>Dans cette version, les données sont des fichiers JSON 
+                    statiques hébergés sur le serveur&nbsp: plus besoin de serveur
+                    Nodejs ni de gestionnaire de base de données.</p>
+            </div>
+            <div id="nconf"></div>
+        </section>
+   </body>
+
+</html>
