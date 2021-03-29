@@ -1,8 +1,7 @@
 scalar JSON
 
-type Artist{
-    artist: ID
-    artistname: String
+type Marque{
+    marque: String
     count: Int
 }
 
@@ -13,6 +12,6 @@ type Instrument{
 
 
 type Query {
-    artists(mini: Int): [Artist]
+    marques(mini: Int): [Marque]
     instruments: [Instrument]
 }

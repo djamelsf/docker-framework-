@@ -8,7 +8,7 @@ const url = 'mongodb://root:example@mongodb:27017';
 //const url = 'mongodb://root:example@172.18.0.2:27017';
 
 // Database Name
-const dbName = 'clasik';
+const dbName = 'carsBD';
 
 // Create a new MongoClient
 const client = new MongoClient(url, {useUnifiedTopology: true});
@@ -43,10 +43,10 @@ client.connect(function (err) {
 // qui renvoie la variable 'books'
 const resolvers = {
     Query: {
-        artists(root, args, context) {
+        marques(root, args, context) {
             return new Promise((resolve, reject) => {
                 const db = client.db(dbName);
-                findDocuments(db, 'artists', {count:{$gt:args.mini}}, resolve);
+                findDocuments(db, 'marques', {count:{$gt:args.mini}}, resolve);
             }).then(result => {
                 return result
             });
