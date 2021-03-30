@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+ <style type="text/css">
+            .publisherCount{
+                float: right;
+                background-color: #fc5200;
+                text-align: right;
+                color: whitesmoke;
+                font-size: small;
+            }
+            .publisher{
+                height: 1.1em;
+                display: table;
+                width: 400px;
+            }
+            .publisherName{
+                font-size: small;
+                display: table-cell;
+            }
+        </style>
+
+        <script type="text/javascript" src="js/d3.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+   <a class="navbar-brand" href="index.html">
+    <img src="statGames.png" width="200" height="30" class="d-inline-block align-top" alt="">
+  </a>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+       <li class="nav-item">
+        <a class="nav-link" href="genres.html">Genres</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="platformes.html">Plates-formes</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="editeurs.html">Éditeurs</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="platforms_by_year.html">Plate-forme par année</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<br>
+
+<h2 class="text-center">Nombre des jeux produits par un éditeur</h2>
+<div class="container" style="width: 500px;"> 
+            <button onclick="sortByName()" class="btn btn-primary" style="background-color:#fc5200; border-color: #fc5200;">Trier par nom</button>
+            <button onclick="sortByCount()" class="btn btn-primary" style="background-color:#fc5200; border-color: #fc5200;">Trier par nombre</button>
+        </div>
+<br>
+<div id="content" class="container" style="width: 500px;"></div>
+
+
+
+
+
+  </body>
+
+
+    <script>
+        let publishers;
+        let sortCount = "down";
+        let sortName = "down";
+
+        function sortByCount() {
+            if (sortCount == "down") {
+                publishers.sort((a, b) => d3.ascending(a.count, b.count));
+                sortCount = "up";
+            } else {
+                publishers.sort((a, b) => d3.descending(a.count, b.count));
+                sortCount = "down";
+            }
+
+            d3
+                    .select("#content")
+                    .selectAll("div")
+                    .data(publishers, d => d.publisher)
+                    .order()
+        }
+
+        function sortByName() {
+            if (sortName == "down") {
+                publishers.sort((a, b) => d3.ascending(lastName(a.publisher), lastName(b.publisher)));
+                sortName = "up";
+            } else {
+                publishers.sort((a, b) => d3.descending(lastName(a.publisher), lastName(b.publisher)));
+                sortName = "down";
+            }
+
+            d3
+                    .select("#content")
+                    .selectAll("div")
+                    .data(publishers, d => d.publisher)
+                    .order()
+        }
+
+        function lastName(name) {
+            let shortName = name.substring(0, 20)
+            return shortName.substring(shortName.lastIndexOf(' ') + 1)
+        }
+
+        function drawArtists(root) {
+            console.log(root.data.platforms)
+            publishers = root.data.publishers
+
+            d3
+                    .select("#content")
+                    .selectAll("div")
+                    .data(publishers)
+                    .join("div")
+                    .attr("class", "publisher")
+                    .append("div")
+                    .attr("class", "publisherName")
+                    .text(d => d.publisher)//.substring(0, 20))
+
+            d3.selectAll(".publisher")
+                    .append("div")
+                    .attr("class", "publisherCount")
+                    .style("width", d => Math.log(d.count) + "1em")
+                    .text(d => d.count)
+
+        }
+
+        d3.json("http://localhost:4000/?query={publishers(mini:0){count publisher}}").then(drawArtists)
+    </script>
+</html>

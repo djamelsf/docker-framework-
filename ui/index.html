@@ -1,69 +1,65 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <script type="text/javascript" src="js/d3.min.js"></script>
-        <link rel="stylesheet" href="css/bootstrap.min.css"/>
-        <style type="text/css">
-            .artistCount{
+<!doctype html>
+<html lang="fr">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+ <style type="text/css">
+            .genreCount{
                 float: right;
-                background-color: #00933C;
+                background-color: #fc5200;
                 text-align: right;
                 color: whitesmoke;
                 font-size: small;
             }
-            .artist{
+            .genre{
                 height: 1.1em;
                 display: table;
                 width: 400px;
             }
-            .artistName{
+            .genreName{
                 font-size: small;
                 display: table-cell;
             }
         </style>
 
+        <script type="text/javascript" src="js/d3.min.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" href="index.html">Accueil</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="artists.html">Artistes</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="instruments.html">Instruments</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Tonalités</a>
-            </li>
-        </ul>
-        <section id="content">
-            <div id="d3-content">
-                <p>Pr&eacute;sentation de donn&eacute;es de 
-                    bibliographie&nbsp;: des auteurs publient conjointement 
-                    &agrave; des conf&eacute;rences. </p>
-                <p>On cherche &agrave; rendre 
-                    l'information visuellement attractive.</p>
-                <p>Ce framework devrait combiner&nbsp;:</p>
-                <ul><li>une base de donn&eacute;es non traditionnelle fournissant du JSON</li>
-                    <li>un serveur Nodejs avec socket.io pour servir les données</li>
-                    <li>une visualisation de donn&eacute;es générée côté client avec D3.js</li>
-                </ul>
-                <p>Dans cette version, les données sont des fichiers JSON 
-                    statiques hébergés sur le serveur&nbsp: plus besoin de serveur
-                    Nodejs ni de gestionnaire de base de données.</p>
-            </div>
-            <div id="nconf"></div>
-        </section>
-   </body>
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+   <a class="navbar-brand" href="index.html">
+    <img src="statGames.png" width="200" height="30" class="d-inline-block align-top" alt="">
+  </a>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="genres.html">Genres</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="platformes.html">Plates-formes</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="editeurs.html">Éditeurs</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="platforms_by_year.html">Plate-forme par année</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<br>
+
 
 </html>

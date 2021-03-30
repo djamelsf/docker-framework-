@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+ <style type="text/css">
+            .platformCount{
+                float: right;
+                background-color: #fc5200;
+                text-align: right;
+                color: whitesmoke;
+                font-size: small;
+            }
+            .platform{
+                height: 1.1em;
+                display: table;
+                width: 400px;
+            }
+            .platformName{
+                font-size: small;
+                display: table-cell;
+            }
+        </style>
+
+        <script type="text/javascript" src="js/d3.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+   <a class="navbar-brand" href="index.html">
+    <img src="statGames.png" width="200" height="30" class="d-inline-block align-top" alt="">
+  </a>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+        <a class="nav-link" href="genres.html">Genres</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="platformes.html">Plates-formes</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="editeurs.html">Éditeurs</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="platforms_by_year.html">Plate-forme par année</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<br>
+
+<h2 class="text-center">Nombre des jeux produits par plate-forme</h2>
+<div class="container" style="width: 500px;"> 
+            <button onclick="sortByName()" class="btn btn-primary" style="background-color:#fc5200; border-color: #fc5200;">Trier par nom</button>
+            <button onclick="sortByCount()" class="btn btn-primary" style="background-color:#fc5200; border-color: #fc5200;">Trier par nombre</button>
+        </div>
+<br>
+
+<br>
+<div id="content" class="container" style="width: 500px;"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </body>
+
+
+    <script>
+        let platforms;
+        let sortCount = "down";
+        let sortName = "down";
+
+        function sortByCount() {
+            if (sortCount == "down") {
+                platforms.sort((a, b) => d3.ascending(a.count, b.count));
+                sortCount = "up";
+            } else {
+                platforms.sort((a, b) => d3.descending(a.count, b.count));
+                sortCount = "down";
+            }
+
+            d3
+                    .select("#content")
+                    .selectAll("div")
+                    .data(platforms, d => d.platform)
+                    .order()
+        }
+
+        function sortByName() {
+            if (sortName == "down") {
+                platforms.sort((a, b) => d3.ascending(lastName(a.platform), lastName(b.platform)));
+                sortName = "up";
+            } else {
+                platforms.sort((a, b) => d3.descending(lastName(a.platform), lastName(b.platform)));
+                sortName = "down";
+            }
+
+            d3
+                    .select("#content")
+                    .selectAll("div")
+                    .data(platforms, d => d.platform)
+                    .order()
+        }
+
+        function lastName(name) {
+            let shortName = name.substring(0, 20)
+            return shortName.substring(shortName.lastIndexOf(' ') + 1)
+        }
+
+        function drawArtists(root) {
+            console.log(root.data.platforms)
+            platforms = root.data.platforms
+
+            d3
+                    .select("#content")
+                    .selectAll("div")
+                    .data(platforms)
+                    .join("div")
+                    .attr("class", "platform")
+                    .append("div")
+                    .attr("class", "platformName")
+                    .text(d => d.platform)//.substring(0, 20))
+
+            d3.selectAll(".platform")
+                    .append("div")
+                    .attr("class", "platformCount")
+                    .style("width", d => Math.log(d.count) + "1em")
+                    .text(d => d.count)
+
+        }
+
+        d3.json("http://localhost:4000/?query={platforms(mini:0){count platform}}").then(drawArtists)
+    </script>
+</html>

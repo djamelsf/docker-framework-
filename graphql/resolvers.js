@@ -8,7 +8,7 @@ const url = 'mongodb://root:example@mongodb:27017';
 //const url = 'mongodb://root:example@172.18.0.2:27017';
 
 // Database Name
-const dbName = 'carsBD';
+const dbName = 'gamesDB';
 
 // Create a new MongoClient
 const client = new MongoClient(url, {useUnifiedTopology: true});
@@ -43,18 +43,34 @@ client.connect(function (err) {
 // qui renvoie la variable 'books'
 const resolvers = {
     Query: {
-        marques(root, args, context) {
+        platforms(root, args, context) {
             return new Promise((resolve, reject) => {
                 const db = client.db(dbName);
-                findDocuments(db, 'marques', {count:{$gt:args.mini}}, resolve);
+                findDocuments(db, 'platforms', {count:{$gt:args.mini}}, resolve);
             }).then(result => {
                 return result
             });
         },
-        instruments(root, args, context) {
+        publishers(root, args, context) {
             return new Promise((resolve, reject) => {
                 const db = client.db(dbName);
-                findDocuments(db, 'instruments', {}, resolve);
+                findDocuments(db, 'publishers', {count:{$gt:args.mini}}, resolve);
+            }).then(result => {
+                return result
+            });
+        },
+        genres(root, args, context) {
+            return new Promise((resolve, reject) => {
+                const db = client.db(dbName);
+                findDocuments(db, 'genres', {count:{$gt:args.mini}}, resolve);
+            }).then(result => {
+                return result
+            });
+        },
+        platforms_by_year(root, args, context) {
+            return new Promise((resolve, reject) => {
+                const db = client.db(dbName);
+                findDocuments(db, 'platforms_by_year', {}, resolve);
             }).then(result => {
                 return result
             });

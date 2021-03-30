@@ -1,17 +1,30 @@
 scalar JSON
 
-type Marque{
-    marque: String
+type Platform{
+    platform: String
     count: Int
 }
 
-type Instrument{
-    instrument: String
+type Publisher{
+    publisher: String
+    count: Int
+}
+
+type Genre{
+    genre: String
+    count: Int
+}
+
+type Platform_by_year{
+    platform: String
+    year_of_release: String
     count: Int
 }
 
 
 type Query {
-    marques(mini: Int): [Marque]
-    instruments: [Instrument]
+    platforms(mini: Int): [Platform]
+    publishers(mini: Int): [Publisher]
+    genres(mini: Int): [Genre]
+    platforms_by_year: [Platform_by_year]
 }
