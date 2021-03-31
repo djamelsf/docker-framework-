@@ -1,0 +1,24 @@
+db.games.aggregate([
+{
+    $group:{
+        _id:{
+            platform:"$Platform",
+            year_of_release:"$Year_of_Release"
+        },
+        count:{
+            $sum: 1
+        }
+    }
+}, 
+{
+    $project:{ 
+        platform:"$_id.platform",
+        year_of_release:"$_id.year_of_release",
+        count:1,
+        _id:0
+    }
+},
+{
+    $out:"platforms_by_year"
+}
+])
