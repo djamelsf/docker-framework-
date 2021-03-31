@@ -33,7 +33,7 @@
         <script type="text/javascript" src="js/d3.min.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Hello, world!</title>
+    <title>StatGames</title>
   </head>
   <body>
 
@@ -136,7 +136,7 @@
             return shortName.substring(shortName.lastIndexOf(' ') + 1)
         }
 
-        function drawArtists(root) {
+        function drawGenres(root) {
             console.log(root.data.genres)
             genres = root.data.genres
 
@@ -158,6 +158,6 @@
 
         }
 
-        d3.json("http://localhost:4000/?query={genres(mini:0){genre count}}").then(drawArtists)
+        d3.json("http://localhost:4000/?query={genres(mini:0){genre count}}").then(drawGenres)
     </script>
 </html>

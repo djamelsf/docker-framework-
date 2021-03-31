@@ -31,9 +31,10 @@
         </style>
 
         <script type="text/javascript" src="js/d3.min.js"></script>
+        <script type="text/javascript" src="js/d3-collection.min.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Hello, world!</title>
+    <title>StatGames</title>
   </head>
   <body>
 
@@ -60,6 +61,235 @@
   </div>
 </nav>
 <br>
+<div class="container">
+<select id="platform" class="form-control">
+  </select>
+  <h3 class="text-center">Nombre des jeux produits par plateforme</h3>
+  <svg id="display" style="margin-top: 20px; margin-left: 200px;"></svg>
+  </div>
+  <script type="text/javascript">
+    // Setting up the svg
+let svg = d3.select("#display")
+svg
+  .attr('width', '620')
+  .attr('height', '620')
+
+let data = 'http://localhost:4000/?query={platforms_by_year{count%20platform%20year_of_release}}'
+let dropdown = document.getElementById('platform')
+
+d3.json(data)
+  .then((data, error) => {
+    if (error) {
+      console.log(error)
+    } else {
+      // Restructuring the data
+      data = data.data.platforms_by_year
+
+      allPlatforms = data.map((d) => d.platform)
+      allPlatforms = [...new Set(allPlatforms)];
+
+      // Ordering the platforms by total games produced:
+      let platformTotals = []
+      allPlatforms.forEach((d) => {
+        platformTotals.push({
+          name: d,
+          count: 0
+        })
+      })
+      platformTotals.forEach((d) => {
+        data.forEach((e) => {
+          if (e.platform == d.name) {
+            d.count += e.count
+          }
+        })
+      })
+      platformTotals.sort((a, b) => b.count - a.count)
+
+      // Dynamically adding the platforms to the dropdown
+      platformTotals.forEach((c) => {
+        dropdown.innerHTML += '<option value="' + c.name + '">' + c.name + ' (Total des jeux produits: ' + c.count + ')</option>'
+      })
+
+      // Creating the default value + setting up the functionality of the dropdown
+      platform = 'PS2'
+      dropdown.addEventListener('change', function (event) {
+        platform = event.target.value
+        createPack(data, platform);
+      })
+      createPack(data, platform);
+    }
+  })
+
+function createPack(data, platform) {
+  // Assigning each value to a circle
+  data = data.filter((e) => e.platform == platform)
+  temp = data.filter(y => y.year_of_release == 'N/A')
+  for (let i = 0; i < temp.length; i++) {
+    temp[i].circle = 'N/A'
+  }
+  data = data.filter(y => y.year_of_release !== 'N/A').sort((a, b) => Number(a.year_of_release) - Number(b.year_of_release))
+
+  for (let i = 0; i < data.length; i++) {
+    if (data.length < 8) {
+      data[i].circle = 'none'
+    } else {
+      if (i < 8) {
+        data[i].circle = 'first'
+      } else if (i < 16) {
+        data[i].circle = 'second'
+      } else if (i < 24) {
+        data[i].circle = 'third'
+      } else {
+        data[i].circle = 'fourth'
+      }
+    }
+  }
+  data = [...data, ...temp]
+  console.log(data)
+  circles = ['first', 'second', 'third', 'fourth', 'N/A']
+
+  // Restructuring the data, so that the circles are included
+  let newData = d3.nest()
+    .key(d => d.circle)
+    .entries(data);
+  newData = {
+    data: { name: 'root' },
+    values: [...newData]
+  }
+
+  // Creating the hierarchy and circle packing
+  let hierarchy = d3.hierarchy(newData, (d) => {
+    return d['values']
+  })
+    .sum((d) => d.count)
+    .sort((a, b) => b.count - a.count)
+
+  let makePack = d3.pack()
+    .size([600, 600])
+
+  makePack(hierarchy)
+
+  // If there is only 1 circle we are adjusting the radius here
+  if (hierarchy.children[0].children.length == 1) {
+    hierarchy.children[0].children[0].r = 100
+  }
+
+  createCirclePacking(hierarchy)
+}
+
+
+
+function createCirclePacking(hierarchy) {
+
+  // Setting up the tooltip and all the circles
+  tooltip = d3.select("body")
+    .append("div")
+    .style("position", "absolute")
+    .style("z-index", "10")
+
+  let block = svg.selectAll('g')
+    // Removing all the previous circles
+    .exit()
+    .remove()
+    // Adding all the new Circles
+    .data(hierarchy)
+    .enter()
+    .append('g')
+    .attr("transform", d => `translate(${d.x + 10},${d.y + 10})`);
+
+  block.append('circle')
+    .attr('r', d => d.r)
+    .attr('dx', d => d.x)
+    .attr('dy', d => d.y)
+    .attr('fill', (d) => {
+      if (circles.includes(d.data.key)) {
+        // Circle for every 8 years:
+        return '#cc2200'
+      }
+      let year = d.data.year_of_release
+      if (year == undefined) {
+        // Circle in the background
+        return '#fc5200'
+      } else {
+        // Inner Circles
+        return '#ffa288'
+      }
+    })
+    // Setting up the tooltip
+    .on("mouseover", function (d) {
+      tooltip.transition()
+        .duration(500)
+        .style('opacity', .9)
+    })
+    .on("mousemove", function (event, dataElement) {
+      let count = dataElement.data.count
+      let year = dataElement.data.year_of_release
+      if (count !== undefined && year !== undefined) {
+        let html = "<strong>Nombre de jeux: </strong>" + count + "<br><strong>Année: </strong>" + year
+
+        return tooltip
+          .html(html)
+          .style("top", (event.pageY - 10) + "px")
+          .style("left", (event.pageX + 10) + "px")
+          .style('background-color', 'lightgrey')
+          .style('border', '3px solid red')
+          .style('padding', '3px')
+
+      } else {
+        tooltip.transition()
+          .duration(100)
+          .style("opacity", 0);
+      }
+    })
+    .on("mouseout", function () {
+      tooltip.transition()
+        .duration(1000)
+        .style("opacity", 0);
+    });
+  text(hierarchy)
+}
+
+function text(data) {
+  // Adding text to the circles
+  svg.selectAll("text")
+    // Removing all the previous text
+    .exit()
+    .remove()
+    // Adding text to each circle
+    .data(data.leaves())
+    .enter()
+    .append("text")
+    .text((d) => {
+      if (d.data.year_of_release !== undefined) {
+        return d.data.year_of_release
+      }
+    })
+    .attr("x", function (d) {
+      let year = d.data.year_of_release
+      let textWidth = displayTextWidth(year, `${Math.min(d.r / 2, 25)}px Times-Roman`)
+      return d.x - (textWidth - 20) / 2;
+    })
+    .attr("y", function (d) {
+      return d.y + d.r / 10 + 10;
+    })
+    .attr("font", (d) => {
+      return '30px Times-Roman'
+    })
+    .attr('fill', 'white')
+    .style('font-size', (d) => {
+      return Math.min(d.r / 2, 25)
+    })
+}
+
+// This function is used to dynamically change the position of the text. It returns the width of the text in the display of the user
+function displayTextWidth(text, font) {
+  let canvas = displayTextWidth.canvas || (displayTextWidth.canvas = document.createElement("canvas"));
+  let context = canvas.getContext("2d");
+  context.font = font;
+  let metrics = context.measureText(text);
+  return metrics.width;
+}
+  </script>
 
 
 </html>

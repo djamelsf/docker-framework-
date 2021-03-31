@@ -45,112 +45,136 @@
 
 Vous pouvez utiliser `D3.js` pour effectuer la visualisation des données obtenues par `graphQL` :
 
-        d3.json("http://localhost:4000/?query={artists(mini:50){artist artistname count}}").then(drawArtists)
+        d3.json("http://localhost:4000/?query={genres(mini:0){genre count}}").then(drawGenres)
 
-## Ressources
-
-- un bon cours sur D3.js : <http://using-d3js.com/index.html>
 
 ## Constitution des données
 
-- on démarre depuis une extraction des titres de <https://musicbrainz.org/doc/MusicBrainz_Database> qui contiennent le mot `opus`
+- on démarre depuis une extraction des jeux de <https://www.kaggle.com/rush4ratio/video-game-sales-with-ratings>
 - on transforme les données pour obtenir les éléments suivants :
 ```
-    {
-      "artist": 879067,
-      "artistname": "sergei prokofiev",
-      "track": 12239831,
-      "title": "piano concerto",
-      "instrument": "piano",
-      "numero": 3,
-      "tonality": "c",
-      "mode": "major",
-      "opus": 26,
-      "part": 3,
-      "indication": "allegro ma non troppo"
-    },
+   {
+    "Name": "Wii Sports",
+    "Platform": "Wii",
+    "Year_of_Release": "2006",
+    "Genre": "Sports",
+    "Publisher": "Nintendo",
+    "NA_Sales": 41.36,
+    "EU_Sales": 28.96,
+    "JP_Sales": 3.77,
+    "Other_Sales": 8.45,
+    "Global_Sales": 82.53,
+    "Critic_Score": 76,
+    "Critic_Count": 51,
+    "User_Score": "8",
+    "User_Count": 322,
+    "Developer": "Nintendo",
+    "Rating": "E"
+   },
 ```
 
 - on insère ces données dans le container `Mongo` :
 
-        jq -c .titles[] titlesWithInstrument.json | grep tonality | docker exec -i docker-framework_mongo_1 sh -c 'mongoimport -d clasik -c titles --authenticationDatabase admin -u root -p example'
+        jq -c .games[] games.json | docker exec -i docker-framework_mongo_1 sh -c 'mongoimport -d gamesDB -c games --authenticationDatabase admin -u root -p example'
 
-- créer la collection des artistes
+- créer la collection des plates-formes
 ```
-db.titles.aggregate([
-    {
-        $group:{
-            _id:{
-                artist:"$artist", 
-                artistname:"$artistname"
-            },
-            count:{
-                $sum: 1
-            }
+db.games.aggregate([
+{
+    $group:{
+        _id:{
+            platform:"$Platform",
+        },
+        count:{
+            $sum: 1
         }
-    }, 
-    {
-        $project:{
-            artist:"$_id.artist", 
-            artistname:"$_id.artistname",
-            count:1,
-            _id:0
-        }
-    },
-    {
-        $out:"artists"
     }
+}, 
+{
+    $project:{ 
+        platform:"$_id.platform",
+        count:1,
+        _id:0
+    }
+},
+{
+    $out:"platforms"
+}
 ])
 ```
-- créer la collection des tonalités :
+- créer la collection des éditeurs :
 ```
-db.titles.aggregate([
-    {
-        $group:{
-            _id:{
-                tonality:"$tonality", 
-                mode:"$mode"
-            },
-            count:{
-                $sum: 1
-            }
+db.games.aggregate([
+{
+    $group:{
+        _id:{
+            publisher:"$Publisher",
+        },
+        count:{
+            $sum: 1
         }
-    }, 
-    {
-        $project:{
-            tonality:"$_id.tonality", 
-            mode:"$_id.mode",
-            count:1,
-            _id:0
-        }
-    },
-    {
-        $out:"tonalities"
     }
+}, 
+{
+    $project:{ 
+        publisher:"$_id.publisher",
+        count:1,
+        _id:0
+    }
+},
+{
+    $out:"publishers"
+}
 ])
 ```
-- créer la collection des instruments :
+- créer la collection des genres :
 ```
-db.titles.aggregate([
-    {
-        $group:{
-            _id:{
-                instrument:"$instrument"
-            },
-            count:{
-                $sum: 1
-            }
+db.games.aggregate([
+{
+    $group:{
+        _id:{
+            genre:"$Genre",
+        },
+        count:{
+            $sum: 1
         }
-    }, 
-    {
-        $project:{
-            instrument:"$_id.instrument",
-            count:1,
-            _id:0
-        }
-    },
-    {
-        $out:"instruments"
     }
+}, 
+{
+    $project:{ 
+        genre:"$_id.genre",
+        count:1,
+        _id:0
+    }
+},
+{
+    $out:"genres"
+}
 ])
 ```
+- créer la collection Plate-forme par année :
+```
+db.games.aggregate([
+{
+    $group:{
+        _id:{
+            platform:"$Platform",
+            year_of_release:"$Year_of_Release"
+        },
+        count:{
+            $sum: 1
+        }
+    }
+}, 
+{
+    $project:{ 
+        platform:"$_id.platform",
+        year_of_release:"$_id.year_of_release",
+        count:1,
+        _id:0
+    }
+},
+{
+    $out:"platforms_by_year"
+}
+])
