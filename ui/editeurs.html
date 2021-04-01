@@ -99,10 +99,10 @@
 
         function sortByName() {
             if (sortName == "down") {
-                publishers.sort((a, b) => d3.ascending(lastName(a.publisher), lastName(b.publisher)));
+                publishers.sort((a, b) => d3.ascending(a.publisher, b.publisher));
                 sortName = "up";
             } else {
-                publishers.sort((a, b) => d3.descending(lastName(a.publisher), lastName(b.publisher)));
+                publishers.sort((a, b) => d3.descending(a.publisher, b.publisher));
                 sortName = "down";
             }
 
@@ -115,6 +115,7 @@
 
         function lastName(name) {
             let shortName = name.substring(0, 20)
+            console.log(shortName.substring(shortName.lastIndexOf(' ') + 1))
             return shortName.substring(shortName.lastIndexOf(' ') + 1)
         }
 

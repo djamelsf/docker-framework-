@@ -77,6 +77,10 @@ Vous pouvez utiliser `D3.js` pour effectuer la visualisation des données obtenu
 
         jq -c .games[] games.json | docker exec -i docker-framework_mongo_1 sh -c 'mongoimport -d gamesDB -c games --authenticationDatabase admin -u root -p example'
 
+- on crée les collections à partir du jeu de données initial en exécutant la commande :
+
+        docker exec -i docker-framework_mongo_1 sh -c 'mongo --quiet --authenticationDatabase admin -u root -p example gamesDB' < path_to_query_file
+        
 - créer la collection des plates-formes
 ```
 db.games.aggregate([
